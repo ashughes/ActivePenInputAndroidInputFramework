@@ -1,0 +1,37 @@
+These are the patches/files that comprise the work done in the thesis
+http://digitalcommons.calpoly.edu/theses/536/
+
+CONTAINS
+
+add_stylus_support.patch
+    The Android framework patch (frameworks/base/). This patch is based on
+    CyanogenMod Gingerbread commit d48995a48bb5f6ca6fe50b4b9ec8877155637af3
+
+wac_android.c
+    Kernel driver (drivers/input/tablet/) that creates a sysfs node to receive
+    data from userspace program and create input events for the Android system.
+
+util/
+    The userspace utility (a modified 'wacdump' utility which is distributed by
+    the Linux Wacom Project) that reads events from the serial node the active
+    digitizer is connected to (such as /dev/ttyUSB0) and writes corresponding
+    data to the /sys/devices/platform/wac_android/input sysfs node created by
+    the wac_android driver. In order to build the utility, the path to the
+    Linux kernel being used needs to be specified in the Makefile. A prebuilt
+    binary is also provided.
+
+webkit.diff
+    This is a simple diff of the changes made in "external/webkit/" (just 2
+    lines added) to comply with the notes in the Android system for where
+    keycodes must be added.
+
+NOTES
+
+These files represent the work as it was at the completion of this thesis. I
+had hoped to clean an organize these changes, but have been unable to thus far.
+If you have any questions, please feel free to contact me.
+
+ERRATA
+
+See ERRATA for comments on my thesis from a Google Android input framework
+engineer.

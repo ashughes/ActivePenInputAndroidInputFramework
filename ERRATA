@@ -1,0 +1,48 @@
+These are comments on my thesis by an Android input framework engineer:
+
+One factual error:
+
+"When there are no more events on the connection’s outbound queue, the
+connection is closed. This allows for events to be continually added to a
+connection’s outbound queue as long as it is still sending them without the
+Connection needing to be re-established (this is referred to as event
+streaming)."
+
+Note sure what you mean by the connection being "closed".  The connection is
+only closed when the window goes away.  However it does transition from an
+active to inactive state based on the state of its queue.  This is just
+internal bookkeeping to make it easier to find the connections that we are
+waiting for responses from.  Event streaming is used to send additional
+movement samples to an application as long as the application has not yet
+handled the last samples.  This reduces latency a little bit. (but not enough,
+really).
+
+Reading section 6.3 makes me cringe in sympathy.  Plumbing a new field through
+the input system is a pain.  :)
+
+In section 6.4, is sounds like hover events & proximity enter/exit are being
+sent to the focused window.  That's an interesting choice.  In Honeycomb 3.1 we
+actually send hover events to the window under the pointer, similar to touch
+events although, as in your taxonomy, hover events are considered to be
+non-touch events.
+
+In section 6.5, you propose changing max events per second.  Actually, the way
+that the throttling works, no movements are actually lost.  They are just
+batched and become part of the "historical" event trace.  It's perfectly ok if
+the application only receives events in batches at 60Hz.  It's not like it needs
+to get them in real time.
+
+"Due to the fact that it is only a system property (which is read directly from
+a system property text file),"
+
+System properties are not actually read from a text file, although you might
+find a text file in the build system that provides initial values for some
+properties.  The system properties are actually managed by the property service,
+which is part of initd.
+
+In 9.1 Changing the Pointer, the simplest expedient is to rope the InputManager
+or InputMonitor class into taking care of updating the pointer shape when the
+focused application changes.  It already knows because it has to tell the
+InputDispatcher about it.  So then you just store the current pointer shape in
+the WindowState associated with each window.  In other words the
+WindowManagerService could just take care of managing pointers.  :)
